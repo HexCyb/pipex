@@ -1,5 +1,7 @@
 # pipex
 
+[![CI](https://github.com/HexCyb/pipex/actions/workflows/ci.yml/badge.svg)](https://github.com/HexCyb/pipex/actions/workflows/ci.yml)
+
 Shell pipes rebuilt in C with `pipe`, `fork`, `dup2` and `execve`. The program behaves like the shell, error messages and exit codes included.
 
 > Originally completed at **42 Türkiye** as part of the common core. This repository is a 2026 rewrite, because the original code was lost.
@@ -61,3 +63,12 @@ src/heredoc_bonus.c   reading the here_doc text
 src/utils.c           small string helpers
 tests/run_tests.sh    side-by-side comparison with bash
 ```
+
+## Continuous integration
+
+Every push runs [GitHub Actions](https://github.com/HexCyb/pipex/actions/workflows/ci.yml) (`.github/workflows/ci.yml`):
+
+- builds the mandatory part and the bonus with `-Wall -Wextra -Werror`
+- `make test`: every case is run by bash and by pipex; the output file and the exit status must match
+- the same tests on an AddressSanitizer + UBSan build
+- a valgrind run that fails on any definite leak
