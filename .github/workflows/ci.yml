@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build mandatory + bonus with -Wall -Wextra -Werror
+        run: make && make bonus
+      - name: Compare with the real shell (output file + exit status)
+        run: make test
+      - name: Same tests on an AddressSanitizer + UBSan build
+        run: make fclean && make test CFLAGS="-Wall -Wextra -Werror -Iinclude -g -fsanitize=address,undefined"
+      - name: No memory leaks (valgrind)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq valgrind > /dev/null
+          make fclean && make bonus
+          printf 'hello\nworld\nhello 42\n' > /tmp/in
+          valgrind --leak-check=full --errors-for-leak-kinds=definite --error-exitcode=42 -q \
+            ./pipex /tmp/in "cat" "grep hello" "wc -l" /tmp/out
+          test "$(cat /tmp/out)" = "2"
