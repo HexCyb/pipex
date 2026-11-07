@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build mandatory + bonus with -Wall -Wextra -Werror
         run: make && make bonus
       - name: Compare with the real shell (output file + exit status)
